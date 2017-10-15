@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KetabKhan.MainBot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,9 @@ namespace KetabKhan
 {
     class Program
     {
-        int start = 0;
         static void Main(string[] args)
         {
-            //sadfs
+            MyBOT.Run_Bot();
         }
     }
 }
