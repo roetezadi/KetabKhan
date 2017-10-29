@@ -33,5 +33,16 @@ namespace KetabKhan.Properties {
                 return ((string)(this["CounselorBOTConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DESKTOP-T590RA7\\SQLEXPRESS;Initial Catalog=DBLab;Integrated Security=" +
+            "True")]
+        public string DBLabConnectionString {
+            get {
+                return ((string)(this["DBLabConnectionString"]));
+            }
+        }
     }
 }

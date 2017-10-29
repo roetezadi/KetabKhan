@@ -1,4 +1,5 @@
 ﻿using KetabKhan.Linq;
+using KetabKhan.Models;
 using NetTelegramBotApi;
 using NetTelegramBotApi.Requests;
 using System;
@@ -25,11 +26,13 @@ namespace KetabKhan.MainBot
             int cnt = 0;
 
             //getting the list of person in ram
-            //List<Person> persons = new List<Person>();
+            List<Person> persons = new List<Person>();
             long offset = 0;
             long IID = 0;
+            long ExamIDs = 0;
+            long QuestionIDs = 0;
 
-            DBTestDataContext db = new DBTestDataContext();
+            DBTest1DataContext db = new DBTest1DataContext();
 
             while (true)
             {
@@ -38,41 +41,25 @@ namespace KetabKhan.MainBot
                 {
                     foreach (var update in updates)
                     {
-                        Console.WriteLine(update.Message.Text);
-                        /**
+                        /**/
                         long ChatID = update.Message.Chat.Id;
+
                         if (!UserId.ContainsKey(ChatID))
                         {
                             UserId.Add(ChatID, cnt);
+                            Person p = new Person();
+                            p.ChatID = ChatID;
+                            p.State = "start";
+                            persons.Add(p);
                             cnt++;
                         }
-                        else
-                        {
-
-                        }
+                        persons[UserId[ChatID]].Text = update.Message.Text;
+                        Console.WriteLine(persons[UserId[ChatID]].State);
+                        UserState User_State = new UserState();
+                        Console.WriteLine("h1");
+                        User_State.CheckState(persons[UserId[ChatID]], Bot, db, ExamIDs, QuestionIDs);
                         offset = update.UpdateId + 1;
-                         /**/
-                        string text = update.Message.Text;
-                        long ChatID = update.Message.Chat.Id;
-                        if (text == "/start")
-                        {
-                            string message = "به بات خوش آمدید :\\" ;
-                            var reg = new SendMessage(ChatID, message);
-                            Bot.MakeRequestAsync(reg);
-                        }
-                        else
-                        {
-                            Test t = new Test();
-                            t.Id = IID;
-                            t.Message = text;
-                            db.Tests.InsertOnSubmit(t);
-                            try { db.SubmitChanges(); }
-                            catch (Exception e) { Console.WriteLine(e.Message); }
-                            string message = "گفتی: " + text + "😐😐";
-                            var reg = new SendMessage(ChatID, message);
-                            Bot.MakeRequestAsync(reg);
-                        }
-                        offset = update.UpdateId + 1;
+                       
                         IID++;
                     }
                 }
