@@ -13,13 +13,14 @@ namespace KetabKhan.MainBot
     public class MyBOT
     {
         private static string Token = "461324394:AAEOZZf-tUd3ETK2iWOdbilb-HEQGVQZIZU";
-       
+
         public static void Run_Bot()
         {
             //making the bot
             var Bot = new TelegramBot(Token);
             var me = Bot.MakeRequestAsync(new GetMe()).Result;
 
+            DBTest1DataContext db = new DBTest1DataContext();
 
             //creating for each user a specific id to have it's own state
             var UserId = new Dictionary<long, int>();
@@ -29,10 +30,11 @@ namespace KetabKhan.MainBot
             List<Person> persons = new List<Person>();
             long offset = 0;
             long IID = 0;
-            long ExamIDs = 0;
-            long QuestionIDs = 0;
+            long ExamIDs = db.Exams.Count();
+            long QuestionIDs = db.ExamQuestions.Count();
+            long ChoiceIDs = db.ExamChoices.Count();
 
-            DBTest1DataContext db = new DBTest1DataContext();
+            
 
             while (true)
             {
@@ -57,9 +59,11 @@ namespace KetabKhan.MainBot
                         Console.WriteLine(persons[UserId[ChatID]].State);
                         UserState User_State = new UserState();
                         Console.WriteLine("h1");
-                        User_State.CheckState(persons[UserId[ChatID]], Bot, db, ExamIDs, QuestionIDs);
+                        User_State.CheckState(persons[UserId[ChatID]], Bot, db, ExamIDs, QuestionIDs, ChoiceIDs);
                         offset = update.UpdateId + 1;
-                       
+                        ExamIDs++;
+                        QuestionIDs++;
+                        ChoiceIDs++;
                         IID++;
                     }
                 }

@@ -56,6 +56,7 @@
       <DependentUpon>DBTest1.dbml</DependentUpon>
     </Compile>
     <Compile Include="MainBot\MyBOT.cs" />
+    <Compile Include="Models\Functions.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Models\UserState.cs" />
     <Compile Include="Program.cs" />

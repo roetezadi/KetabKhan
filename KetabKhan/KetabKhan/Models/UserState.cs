@@ -13,39 +13,21 @@ namespace KetabKhan.Models
     public class UserState
     {
         MyKeyboards keyboard = new MyKeyboards();
-        public void CheckState(Person person, TelegramBot Bot, DBTest1DataContext db, long ExamIDs, long QuestionIDs)
+        public void CheckState(Person person, TelegramBot Bot, DBTest1DataContext db, long ExamIDs, long QuestionIDs, long ChoiceIDs)
         {
             Exam e = new Exam();
             ExamQuestion eq = new ExamQuestion();
             ExamChoice ec = new ExamChoice();
-            /**
-            Test t = db.Tests.FirstOrDefault(x => x.Id == person.ChatID);
-            Console.WriteLine("nazi");
-            if (t == null)
-            {
-                Console.WriteLine("nazi2");
-                Test tt = new Test();
-                tt.Id = person.ChatID;
-                tt.Message = person.Text;
-                tt.State = person.State;
-                db.Tests.InsertOnSubmit(tt);
-                try
-                {
-                    db.SubmitChanges();
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }
-            }
-    /**/
+            
             if (person.State == "start" || person.Text == "/start")
             {
                 string message = "با سلام به بات خوش آمدید. برای ایجاد مسابقه لطفا ابتدا تعداد سوالات خود را وارد کنید:";
                 var reg = new SendMessage(person.ChatID, message);
                 Bot.MakeRequestAsync(reg);
                 person.State = "EnterNumQ";
-                /**
+                /*inserting to DB Users*/
                 e.ExamID = ExamIDs;
                 person.ExamID = ExamIDs;
-                ExamIDs++;
                 e.UserID = person.ChatID;
                 db.Exams.InsertOnSubmit(e);
                 try
@@ -53,7 +35,7 @@ namespace KetabKhan.Models
                     db.SubmitChanges();
                 }
                 catch { }
-    /**/
+                /**/
 
             }
             else if (person.State == "EnterNumQ")
@@ -64,7 +46,6 @@ namespace KetabKhan.Models
                 Bot.MakeRequestAsync(reg);
                 person.cntQ++;
                 person.State = "EnterQ";
-
             }
             else if (person.State == "EnterQ")
             {
@@ -72,10 +53,18 @@ namespace KetabKhan.Models
                 var reg = new SendMessage(person.ChatID, message);
                 Bot.MakeRequestAsync(reg);
                 person.State = "EnterNumC";
-                //eq.Question = person.Text;
-                //eq.QuestionID = QuestionIDs;
-                //eq.ExamID = person.ExamID;
-                //QuestionIDs++;
+                //inserting to DB Questions
+                eq.Question = person.Text;
+                eq.QuestionID = QuestionIDs;
+                person.NowQuestionID = QuestionIDs;
+                person.ListOfQuestion.Add(QuestionIDs);
+                eq.ExamID = person.ExamID;
+                db.ExamQuestions.InsertOnSubmit(eq);
+                try
+                {
+                    db.SubmitChanges();
+                }
+                catch { }
             }
             else if (person.State == "EnterNumC")
             {
@@ -91,9 +80,13 @@ namespace KetabKhan.Models
             {
                 if (person.cntC + 1 > person.Cnum && person.cntQ + 1 > person.Qnum)
                 {
-                    string message = "تمامی سوالات با گزینه‌ها به درستی ثبت شدند.";
+                    //string message = "تمامی سوالات با گزینه‌ها به درستی ثبت شدند حال گزینه‌های درست را وارد کنید. سوال اول:.";
+                    string message = "با تشکر تمامی سوالات ثبت شد!";
                     var reg = new SendMessage(person.ChatID, message);
                     Bot.MakeRequestAsync(reg);
+                    person.cntC = 0;
+                    person.cntQ = 1;
+                    //person.State = "GetRightAnswer";
                     person.State = "Over";
                 }
                 else if (person.cntC + 1 > person.Cnum )
@@ -112,6 +105,28 @@ namespace KetabKhan.Models
                     Bot.MakeRequestAsync(reg);
                     person.cntC++;
                     person.State = "EnterC";
+                }
+                //insert to DB choices
+                ec.Choice = person.Text;
+                ec.ChoiceID = ChoiceIDs;
+                ec.QuestionID = person.NowQuestionID;
+                db.ExamChoices.InsertOnSubmit(ec);
+                try
+                {
+                    db.SubmitChanges();
+                }
+                catch { }
+            }
+            else if (person.State == "GetRightAnswer")
+            {
+                if (person.cntQ < person.Qnum)
+                {
+
+                    person.cntQ++;
+                }
+                else
+                {
+                    person.State = "Over";
                 }
             }
             else if(person.State == "Over")

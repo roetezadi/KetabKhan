@@ -16,5 +16,7 @@ namespace KetabKhan.Models
         public int cntQ = 0;
         public int cntC = 0;
         public long ExamID;
+        public long NowQuestionID;
+        public List<long> ListOfQuestion = new List<long>();
     }
 }
