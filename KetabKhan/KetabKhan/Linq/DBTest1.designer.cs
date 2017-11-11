@@ -30,15 +30,15 @@ namespace KetabKhan.Linq
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
+    partial void InsertExam(Exam instance);
+    partial void UpdateExam(Exam instance);
+    partial void DeleteExam(Exam instance);
     partial void InsertExamChoice(ExamChoice instance);
     partial void UpdateExamChoice(ExamChoice instance);
     partial void DeleteExamChoice(ExamChoice instance);
     partial void InsertExamQuestion(ExamQuestion instance);
     partial void UpdateExamQuestion(ExamQuestion instance);
     partial void DeleteExamQuestion(ExamQuestion instance);
-    partial void InsertExam(Exam instance);
-    partial void UpdateExam(Exam instance);
-    partial void DeleteExam(Exam instance);
     #endregion
 		
 		public DBTest1DataContext() : 
@@ -71,6 +71,14 @@ namespace KetabKhan.Linq
 			OnCreated();
 		}
 		
+		public System.Data.Linq.Table<Exam> Exams
+		{
+			get
+			{
+				return this.GetTable<Exam>();
+			}
+		}
+		
 		public System.Data.Linq.Table<ExamChoice> ExamChoices
 		{
 			get
@@ -86,13 +94,143 @@ namespace KetabKhan.Linq
 				return this.GetTable<ExamQuestion>();
 			}
 		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Exam")]
+	public partial class Exam : INotifyPropertyChanging, INotifyPropertyChanged
+	{
 		
-		public System.Data.Linq.Table<Exam> Exams
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private long _ExamID;
+		
+		private string _ExamName;
+		
+		private System.Nullable<long> _UserID;
+		
+		private EntitySet<ExamQuestion> _ExamQuestions;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnExamIDChanging(long value);
+    partial void OnExamIDChanged();
+    partial void OnExamNameChanging(string value);
+    partial void OnExamNameChanged();
+    partial void OnUserIDChanging(System.Nullable<long> value);
+    partial void OnUserIDChanged();
+    #endregion
+		
+		public Exam()
+		{
+			this._ExamQuestions = new EntitySet<ExamQuestion>(new Action<ExamQuestion>(this.attach_ExamQuestions), new Action<ExamQuestion>(this.detach_ExamQuestions));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExamID", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
+		public long ExamID
 		{
 			get
 			{
-				return this.GetTable<Exam>();
+				return this._ExamID;
 			}
+			set
+			{
+				if ((this._ExamID != value))
+				{
+					this.OnExamIDChanging(value);
+					this.SendPropertyChanging();
+					this._ExamID = value;
+					this.SendPropertyChanged("ExamID");
+					this.OnExamIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExamName", DbType="NChar(10)")]
+		public string ExamName
+		{
+			get
+			{
+				return this._ExamName;
+			}
+			set
+			{
+				if ((this._ExamName != value))
+				{
+					this.OnExamNameChanging(value);
+					this.SendPropertyChanging();
+					this._ExamName = value;
+					this.SendPropertyChanged("ExamName");
+					this.OnExamNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="BigInt")]
+		public System.Nullable<long> UserID
+		{
+			get
+			{
+				return this._UserID;
+			}
+			set
+			{
+				if ((this._UserID != value))
+				{
+					this.OnUserIDChanging(value);
+					this.SendPropertyChanging();
+					this._UserID = value;
+					this.SendPropertyChanged("UserID");
+					this.OnUserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Exam_ExamQuestion", Storage="_ExamQuestions", ThisKey="ExamID", OtherKey="ExamID")]
+		public EntitySet<ExamQuestion> ExamQuestions
+		{
+			get
+			{
+				return this._ExamQuestions;
+			}
+			set
+			{
+				this._ExamQuestions.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_ExamQuestions(ExamQuestion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Exam = this;
+		}
+		
+		private void detach_ExamQuestions(ExamQuestion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Exam = null;
 		}
 	}
 	
@@ -283,6 +421,8 @@ namespace KetabKhan.Linq
 		
 		private string _Question;
 		
+		private string _RightAnswer;
+		
 		private EntitySet<ExamChoice> _ExamChoices;
 		
 		private EntityRef<Exam> _Exam;
@@ -297,6 +437,8 @@ namespace KetabKhan.Linq
     partial void OnExamIDChanged();
     partial void OnQuestionChanging(string value);
     partial void OnQuestionChanged();
+    partial void OnRightAnswerChanging(string value);
+    partial void OnRightAnswerChanged();
     #endregion
 		
 		public ExamQuestion()
@@ -366,6 +508,26 @@ namespace KetabKhan.Linq
 					this._Question = value;
 					this.SendPropertyChanged("Question");
 					this.OnQuestionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightAnswer", DbType="NChar(500)")]
+		public string RightAnswer
+		{
+			get
+			{
+				return this._RightAnswer;
+			}
+			set
+			{
+				if ((this._RightAnswer != value))
+				{
+					this.OnRightAnswerChanging(value);
+					this.SendPropertyChanging();
+					this._RightAnswer = value;
+					this.SendPropertyChanged("RightAnswer");
+					this.OnRightAnswerChanged();
 				}
 			}
 		}
@@ -447,144 +609,6 @@ namespace KetabKhan.Linq
 		{
 			this.SendPropertyChanging();
 			entity.ExamQuestion = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Exam")]
-	public partial class Exam : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private long _ExamID;
-		
-		private string _ExamName;
-		
-		private System.Nullable<long> _UserID;
-		
-		private EntitySet<ExamQuestion> _ExamQuestions;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnExamIDChanging(long value);
-    partial void OnExamIDChanged();
-    partial void OnExamNameChanging(string value);
-    partial void OnExamNameChanged();
-    partial void OnUserIDChanging(System.Nullable<long> value);
-    partial void OnUserIDChanged();
-    #endregion
-		
-		public Exam()
-		{
-			this._ExamQuestions = new EntitySet<ExamQuestion>(new Action<ExamQuestion>(this.attach_ExamQuestions), new Action<ExamQuestion>(this.detach_ExamQuestions));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExamID", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
-		public long ExamID
-		{
-			get
-			{
-				return this._ExamID;
-			}
-			set
-			{
-				if ((this._ExamID != value))
-				{
-					this.OnExamIDChanging(value);
-					this.SendPropertyChanging();
-					this._ExamID = value;
-					this.SendPropertyChanged("ExamID");
-					this.OnExamIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExamName", DbType="NChar(10)")]
-		public string ExamName
-		{
-			get
-			{
-				return this._ExamName;
-			}
-			set
-			{
-				if ((this._ExamName != value))
-				{
-					this.OnExamNameChanging(value);
-					this.SendPropertyChanging();
-					this._ExamName = value;
-					this.SendPropertyChanged("ExamName");
-					this.OnExamNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="BigInt")]
-		public System.Nullable<long> UserID
-		{
-			get
-			{
-				return this._UserID;
-			}
-			set
-			{
-				if ((this._UserID != value))
-				{
-					this.OnUserIDChanging(value);
-					this.SendPropertyChanging();
-					this._UserID = value;
-					this.SendPropertyChanged("UserID");
-					this.OnUserIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Exam_ExamQuestion", Storage="_ExamQuestions", ThisKey="ExamID", OtherKey="ExamID")]
-		public EntitySet<ExamQuestion> ExamQuestions
-		{
-			get
-			{
-				return this._ExamQuestions;
-			}
-			set
-			{
-				this._ExamQuestions.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_ExamQuestions(ExamQuestion entity)
-		{
-			this.SendPropertyChanging();
-			entity.Exam = this;
-		}
-		
-		private void detach_ExamQuestions(ExamQuestion entity)
-		{
-			this.SendPropertyChanging();
-			entity.Exam = null;
 		}
 	}
 }
