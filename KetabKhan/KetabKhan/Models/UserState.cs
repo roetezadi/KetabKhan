@@ -41,7 +41,11 @@ namespace KetabKhan.Models
                 /*inserting to DB Users*/
                 //e.ExamID = ExamIDs;
                 person.ExamID = ExamIDs;
-                db_helper.InsertToExam(ExamIDs, person.ChatID);
+                try
+                {
+                    db_helper.InsertToExam(ExamIDs, person.ChatID);
+                }
+                catch (Exception e1) { }
                 //e.UserID = person.ChatID;
                 //db.Exams.InsertOnSubmit(e);
                 /**
@@ -60,9 +64,48 @@ namespace KetabKhan.Models
                 Bot.MakeRequestAsync(reg);
                 person.State = "EnterNumQ";
             }
-            else if (person.State == "menu" && person.Text == "")
+            else if (person.State == "menu" && person.Text == "📝شرکت در مسابقه")
             {
-
+                string message = "برای شروع مسابقه کد مسابقه را وارد کنید:";
+                var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.GoMenu() };
+                Bot.MakeRequestAsync(reg);
+                person.State = "BeginExam";
+            }
+            else if (person.State == "BeginExam" && regex.IsMatch(person.Text))
+            {
+                if (arabicregex.IsMatch(person.Text))
+                {
+                    person.TakeExamID = func.arabictonum(person.Text);
+                }
+                else
+                {
+                    person.TakeExamID = Convert.ToInt32(person.Text);
+                }
+                person.startq = 0;
+                person.ExamQuestions = db.ExamQuestions.Where(x => x.ExamID == person.TakeExamID).ToList();
+                string message = person.ExamQuestions[person.startq].Question;
+                var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.QuestionChoices(person.ExamQuestions[person.startq].QuestionID) };
+                Bot.MakeRequestAsync(reg);
+                person.State = "InExam";
+                person.startq++;
+            }
+            else if (person.State == "InExam")
+            {
+                if (person.startq < person.ExamQuestions.Count)
+                {
+                    string message = person.ExamQuestions[person.startq].Question;
+                    var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.QuestionChoices(person.ExamQuestions[person.startq].QuestionID) };
+                    Bot.MakeRequestAsync(reg);
+                    person.startq++;
+                }
+                else
+                {
+                    string message = "مسابقه پایان یافت! با تشکر از شرکت شما در مسابقه.";
+                    var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.Menu() };
+                    Bot.MakeRequestAsync(reg);
+                    person.startq = 0;
+                    person.State = "menu";
+                }
             }
             else if (person.State == "EnterNumQ" && regex.IsMatch(person.Text))
             {
@@ -91,8 +134,12 @@ namespace KetabKhan.Models
                 //eq.QuestionID = QuestionIDs;
                 person.NowQuestionID = QuestionIDs;
                 person.ListOfQuestion.Add(QuestionIDs);
-                db_helper.InsertToExamQuestion(person.Text, QuestionIDs, person.ExamID);
-                //eq.ExamID = person.ExamID;
+                try
+                {
+                    db_helper.InsertToExamQuestion(person.Text, QuestionIDs, person.ExamID);
+                }
+                catch (Exception e2) { }
+                    //eq.ExamID = person.ExamID;
                 //db.ExamQuestions.InsertOnSubmit(eq);
                 /**
                 try
@@ -150,8 +197,12 @@ namespace KetabKhan.Models
                     person.State = "EnterC";
                 }
                 //insert to DB choices
-                db_helper.InsertToExamChoice(person.Text, ChoiceIDs, person.NowQuestionID);
-                /**
+                try
+                {
+                    db_helper.InsertToExamChoice(person.Text, ChoiceIDs, person.NowQuestionID);
+                }
+                catch (Exception e3) { }
+                    /**
                 ec.Choice = person.Text;
                 ec.ChoiceID = ChoiceIDs;
                 ec.QuestionID = person.NowQuestionID;
@@ -166,9 +217,17 @@ namespace KetabKhan.Models
             else if (person.State == "GetRightAnswer")
             {
                 long? l = person.ListOfQuestion[person.cntQ - 1];
+                db_helper.SetRightAnswer(l, person.Text);
+                /**
                 ExamQuestion eq1 = db.ExamQuestions.FirstOrDefault(x => x.QuestionID == l);
                 eq1.RightAnswer = person.Text;
-                
+                try
+                {
+                    db.SubmitChanges();
+                }
+                catch (Exception e1) { }
+                /**/
+
                 if (person.cntQ < person.Qnum)
                 {
                     string message = "گزینه درست سوال " + (person.cntQ+1) + " را وارد کنید:";
@@ -178,7 +237,8 @@ namespace KetabKhan.Models
                 }
                 else
                 {
-                    string message = "با تشکر تمامی سوالات همراه با گزینه آنها و جواب صحیح آنها به درستی ذخیره شد.";
+                    long id = db.Exams.FirstOrDefault(x => x.UserID == person.ChatID).ExamID;
+                    string message = "با تشکر تمامی سوالات همراه با گزینه آنها و جواب صحیح آنها به درستی ذخیره شد." + "\n" + "کد مسابقه: " + id;
                     var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.Menu()};
                     Bot.MakeRequestAsync(reg);
                     person.cntC = 0;
@@ -193,11 +253,13 @@ namespace KetabKhan.Models
                 Bot.MakeRequestAsync(reg);
             }
             //t.State = person.State;
+            /**
             try
             {
                 db.SubmitChanges();
             }
             catch (Exception e1) { }
+    /**/
             //db.SubmitChanges();
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KetabKhan.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,5 +19,8 @@ namespace KetabKhan.Models
         public long ExamID;
         public long NowQuestionID;
         public List<long> ListOfQuestion = new List<long>();
+        public long TakeExamID;
+        public int startq = 0;
+        public List<ExamQuestion> ExamQuestions = new List<ExamQuestion>();
     }
 }
