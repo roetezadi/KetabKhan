@@ -8,23 +8,23 @@
       <Association Name="Exam_ExamQuestion" Member="ExamQuestions" ThisKey="ExamID" OtherKey="ExamID" Type="ExamQuestion" />
     </Type>
   </Table>
-  <Table Name="dbo.ExamChoices" Member="ExamChoices">
-    <Type Name="ExamChoice">
-      <Column Name="ChoiceID" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Choice" Type="System.String" DbType="NChar(1000)" CanBeNull="true" />
-      <Column Name="RightAnswer" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="QuestionID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
-      <Association Name="ExamQuestion_ExamChoice" Member="ExamQuestion" ThisKey="QuestionID" OtherKey="QuestionID" Type="ExamQuestion" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.ExamQuestion" Member="ExamQuestions">
     <Type Name="ExamQuestion">
       <Column Name="QuestionID" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="ExamID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
-      <Column Name="Question" Type="System.String" DbType="NChar(1000)" CanBeNull="true" />
-      <Column Name="RightAnswer" Type="System.String" DbType="NChar(500)" CanBeNull="true" />
+      <Column Name="Question" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="RightAnswer" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Association Name="ExamQuestion_ExamChoice" Member="ExamChoices" ThisKey="QuestionID" OtherKey="QuestionID" Type="ExamChoice" />
       <Association Name="Exam_ExamQuestion" Member="Exam" ThisKey="ExamID" OtherKey="ExamID" Type="Exam" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ExamChoices" Member="ExamChoices">
+    <Type Name="ExamChoice">
+      <Column Name="ChoiceID" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Choice" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="RightAnswer" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="QuestionID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Association Name="ExamQuestion_ExamChoice" Member="ExamQuestion" ThisKey="QuestionID" OtherKey="QuestionID" Type="ExamQuestion" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

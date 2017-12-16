@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DB\DB_Helper.cs" />
     <Compile Include="Keyboards\MyKeyboards.cs" />
     <Compile Include="Linq\DBTest1.designer.cs">
       <AutoGen>True</AutoGen>

@@ -17,15 +17,34 @@ namespace KetabKhan.Keyboards
 
         Functions func = new Functions();
 
-        public ReplyKeyboardMarkup GetEmkanat()
+        public ReplyKeyboardMarkup Menu()
         {
             ReplyKeyboardMarkup key = new ReplyKeyboardMarkup();
             key.Keyboard = new KeyboardButton[][]
             {
                 new KeyboardButton[]
                 {
-                    new KeyboardButton("دریافت امکانات"),
-                    new KeyboardButton("انصراف")
+                    new KeyboardButton("🖊ایجاد مسابقه"),
+                    new KeyboardButton("🔎اطلاعات بیشتر")
+                },
+                new KeyboardButton[]
+                {
+                    new KeyboardButton("📝شرکت در مسابقه"),
+                    new KeyboardButton("☎️ارتباط با ما")
+                }
+            };
+            key.ResizeKeyboard = true;
+            return key;
+        }
+
+        public ReplyKeyboardMarkup GoMenu()
+        {
+            ReplyKeyboardMarkup key = new ReplyKeyboardMarkup();
+            key.Keyboard = new KeyboardButton[][]
+            {
+                new KeyboardButton[]
+                {
+                    new KeyboardButton("منو اصلی")
                 }
             };
             key.ResizeKeyboard = true;
@@ -41,8 +60,6 @@ namespace KetabKhan.Keyboards
             Console.WriteLine(txt.Count);
             for (int j = 0; j < txt.Count(); j++)
             {
-                txt[j].Choice.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-                string[] ss = func.choice(txt[j].Choice);
                 Console.WriteLine(txt[j].Choice);
                 key.Keyboard[j] = new KeyboardButton[1];
                 key.Keyboard[j][0] = new KeyboardButton(txt[j].Choice);

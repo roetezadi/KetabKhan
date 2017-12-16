@@ -1,4 +1,5 @@
-﻿using KetabKhan.Keyboards;
+﻿using KetabKhan.DB;
+using KetabKhan.Keyboards;
 using KetabKhan.Linq;
 using NetTelegramBotApi;
 using NetTelegramBotApi.Requests;
@@ -28,23 +29,39 @@ namespace KetabKhan.Models
 
             MyKeyboards mykeyboard = new MyKeyboards();
 
-            if (person.State == "start" || person.Text == "/start")
+            DB_Helper db_helper = new DB_Helper();
+
+            if (person.State == "start" || person.Text == "/start" || person.Text == "منو اصلی")
             {
-                string message = "با سلام به بات خوش آمدید. برای ایجاد مسابقه لطفا ابتدا تعداد سوالات خود را وارد کنید:";
-                var reg = new SendMessage(person.ChatID, message);
+                string message = "😁به بات کتابخوان خوش آمدید" + "\n" + "برای  بوجود آوردن مسابقه جدید به ایجاد مسابقه بروید و طبق دستورالعمل گفته شده مسابقه را ایجاد کنید.";
+                var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.Menu()};
                 Bot.MakeRequestAsync(reg);
-                person.State = "EnterNumQ";
+                //person.State = "EnterNumQ";
+                person.State = "menu";
                 /*inserting to DB Users*/
-                e.ExamID = ExamIDs;
+                //e.ExamID = ExamIDs;
                 person.ExamID = ExamIDs;
-                e.UserID = person.ChatID;
-                db.Exams.InsertOnSubmit(e);
+                db_helper.InsertToExam(ExamIDs, person.ChatID);
+                //e.UserID = person.ChatID;
+                //db.Exams.InsertOnSubmit(e);
+                /**
                 try
                 {
                     db.SubmitChanges();
                 }
                 catch { }
                 /**/
+
+            }
+            else if (person.State == "menu" && person.Text == "🖊ایجاد مسابقه")
+            {
+                string message = "برای ایجاد مسابقه لطفا ابتدا تعداد سوالات خود را وارد کنید:";
+                var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.GoMenu()};
+                Bot.MakeRequestAsync(reg);
+                person.State = "EnterNumQ";
+            }
+            else if (person.State == "menu" && person.Text == "")
+            {
 
             }
             else if (person.State == "EnterNumQ" && regex.IsMatch(person.Text))
@@ -70,17 +87,20 @@ namespace KetabKhan.Models
                 Bot.MakeRequestAsync(reg);
                 person.State = "EnterNumC";
                 //inserting to DB Questions
-                eq.Question = person.Text;
-                eq.QuestionID = QuestionIDs;
+                //eq.Question = person.Text;
+                //eq.QuestionID = QuestionIDs;
                 person.NowQuestionID = QuestionIDs;
                 person.ListOfQuestion.Add(QuestionIDs);
-                eq.ExamID = person.ExamID;
-                db.ExamQuestions.InsertOnSubmit(eq);
+                db_helper.InsertToExamQuestion(person.Text, QuestionIDs, person.ExamID);
+                //eq.ExamID = person.ExamID;
+                //db.ExamQuestions.InsertOnSubmit(eq);
+                /**
                 try
                 {
                     db.SubmitChanges();
                 }
                 catch { }
+                /**/
             }
             else if (person.State == "EnterNumC" && regex.IsMatch(person.Text))
             {
@@ -105,7 +125,7 @@ namespace KetabKhan.Models
                 {
                     string message = "تمامی سوالات با گزینه‌ها به درستی ثبت شدند حال گزینه‌های درست را وارد کنید. سوال اول:.";
                     //string message = "با تشکر تمامی سوالات ثبت شد!";
-                    var reg = new SendMessage(person.ChatID, message) /**{ ReplyMarkup = mykeyboard.RightAns(person.ListOfQuestion,0)}/**/;
+                    var reg = new SendMessage(person.ChatID, message) /**/{ ReplyMarkup = mykeyboard.RightAns(person.ListOfQuestion,0)}/**/;
                     Bot.MakeRequestAsync(reg);
                     person.cntC = 0;
                     person.cntQ = 1;
@@ -130,6 +150,8 @@ namespace KetabKhan.Models
                     person.State = "EnterC";
                 }
                 //insert to DB choices
+                db_helper.InsertToExamChoice(person.Text, ChoiceIDs, person.NowQuestionID);
+                /**
                 ec.Choice = person.Text;
                 ec.ChoiceID = ChoiceIDs;
                 ec.QuestionID = person.NowQuestionID;
@@ -139,6 +161,7 @@ namespace KetabKhan.Models
                     db.SubmitChanges();
                 }
                 catch { }
+                /**/
             }
             else if (person.State == "GetRightAnswer")
             {
@@ -149,25 +172,19 @@ namespace KetabKhan.Models
                 if (person.cntQ < person.Qnum)
                 {
                     string message = "گزینه درست سوال " + (person.cntQ+1) + " را وارد کنید:";
-                    var reg = new SendMessage(person.ChatID, message)/** { ReplyMarkup = mykeyboard.RightAns(person.ListOfQuestion, person.cntQ) }**/;
+                    var reg = new SendMessage(person.ChatID, message)/**/ { ReplyMarkup = mykeyboard.RightAns(person.ListOfQuestion, person.cntQ) }/**/;
                     Bot.MakeRequestAsync(reg);
                     person.cntQ++;
                 }
                 else
                 {
                     string message = "با تشکر تمامی سوالات همراه با گزینه آنها و جواب صحیح آنها به درستی ذخیره شد.";
-                    var reg = new SendMessage(person.ChatID, message);
+                    var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.Menu()};
                     Bot.MakeRequestAsync(reg);
-                    person.State = "Over";
+                    person.cntC = 0;
+                    person.cntQ = 0;
+                    person.State = "menu";
                 }
-            }
-            else if(person.State == "Over")
-            {
-                person.cntC = 0;
-                person.cntQ = 0;
-                string message = "برای شروع مجدد /start را بزنید!";
-                var reg = new SendMessage(person.ChatID, message);
-                Bot.MakeRequestAsync(reg);
             }
             else
             {
