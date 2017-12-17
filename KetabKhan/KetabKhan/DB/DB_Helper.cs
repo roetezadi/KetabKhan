@@ -50,6 +50,20 @@ namespace KetabKhan.DB
             con.Close();
         }
 
+        public void InsertToUserTakeExam(long UserID, long ExamID, long QuestionID, string Answer)
+        {
+            con.Open();
+            //we should write the sql command in sql server in programabality and create a stored procedure and write the query and execute it
+            SqlCommand cmd = new SqlCommand("InsertToUserTakeExam", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserID", SqlDbType.BigInt).Value = UserID;
+            cmd.Parameters.AddWithValue("@ExamID", SqlDbType.BigInt).Value = ExamID;
+            cmd.Parameters.AddWithValue("@QuestionID", SqlDbType.BigInt).Value = QuestionID;
+            cmd.Parameters.AddWithValue("@Answer", SqlDbType.Text).Value = Answer;
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
         public void SetRightAnswer(long? QuestionID, string Answer)
         {
             con.Open();

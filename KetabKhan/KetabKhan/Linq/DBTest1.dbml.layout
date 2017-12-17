@@ -27,12 +27,18 @@
         <classShapeMoniker Id="63d584a8-dff3-4457-aae8-a608f34e41a3" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.5 : 1.66429768880208); (6.25 : 1.66429768880208)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.5 : 1.66429768880208); (6.25 : 1.66429768880208)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/DBTest1DataContext/ExamQuestion/ExamQuestion_ExamChoice" />
       <nodes>
         <classShapeMoniker Id="63d584a8-dff3-4457-aae8-a608f34e41a3" />
         <classShapeMoniker Id="777bce76-ca37-4bb5-ba56-d659492e37b1" />
       </nodes>
     </associationConnector>
+    <classShape Id="148cc802-9921-493e-9158-1b12a3c627df" absoluteBounds="4.125, 3.625, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/DBTest1DataContext/UserTakeExam" />
+      <nestedChildShapes>
+        <elementListCompartment Id="bbc2f640-95b0-4a06-977f-b75181f6deac" absoluteBounds="4.14, 4.085, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

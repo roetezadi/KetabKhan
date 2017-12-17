@@ -94,6 +94,14 @@ namespace KetabKhan.Linq
 				return this.GetTable<ExamChoice>();
 			}
 		}
+		
+		public System.Data.Linq.Table<UserTakeExam> UserTakeExams
+		{
+			get
+			{
+				return this.GetTable<UserTakeExam>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Exam")]
@@ -608,6 +616,87 @@ namespace KetabKhan.Linq
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserTakeExam")]
+	public partial class UserTakeExam
+	{
+		
+		private System.Nullable<long> _UserID;
+		
+		private System.Nullable<long> _ExamID;
+		
+		private System.Nullable<long> _QuestionID;
+		
+		private string _Answer;
+		
+		public UserTakeExam()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="BigInt")]
+		public System.Nullable<long> UserID
+		{
+			get
+			{
+				return this._UserID;
+			}
+			set
+			{
+				if ((this._UserID != value))
+				{
+					this._UserID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExamID", DbType="BigInt")]
+		public System.Nullable<long> ExamID
+		{
+			get
+			{
+				return this._ExamID;
+			}
+			set
+			{
+				if ((this._ExamID != value))
+				{
+					this._ExamID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_QuestionID", DbType="BigInt")]
+		public System.Nullable<long> QuestionID
+		{
+			get
+			{
+				return this._QuestionID;
+			}
+			set
+			{
+				if ((this._QuestionID != value))
+				{
+					this._QuestionID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Answer", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		public string Answer
+		{
+			get
+			{
+				return this._Answer;
+			}
+			set
+			{
+				if ((this._Answer != value))
+				{
+					this._Answer = value;
+				}
 			}
 		}
 	}

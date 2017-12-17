@@ -27,4 +27,12 @@
       <Association Name="ExamQuestion_ExamChoice" Member="ExamQuestion" ThisKey="QuestionID" OtherKey="QuestionID" Type="ExamQuestion" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.UserTakeExam" Member="UserTakeExams">
+    <Type Name="UserTakeExam">
+      <Column Name="UserID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="ExamID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="QuestionID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Answer" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+    </Type>
+  </Table>
 </Database>

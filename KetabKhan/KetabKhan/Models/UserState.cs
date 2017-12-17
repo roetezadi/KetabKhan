@@ -40,12 +40,12 @@ namespace KetabKhan.Models
                 person.State = "menu";
                 /*inserting to DB Users*/
                 //e.ExamID = ExamIDs;
-                person.ExamID = ExamIDs;
-                try
-                {
-                    db_helper.InsertToExam(ExamIDs, person.ChatID);
-                }
-                catch (Exception e1) { }
+                //person.ExamID = ExamIDs;
+                //try
+               // {
+                //    db_helper.InsertToExam(ExamIDs, person.ChatID);
+               // }
+               // catch (Exception e1) { }
                 //e.UserID = person.ChatID;
                 //db.Exams.InsertOnSubmit(e);
                 /**
@@ -59,6 +59,12 @@ namespace KetabKhan.Models
             }
             else if (person.State == "menu" && person.Text == "🖊ایجاد مسابقه")
             {
+                person.ExamID = ExamIDs;
+                try
+                {
+                    db_helper.InsertToExam(ExamIDs, person.ChatID);
+                }
+                catch (Exception e1) { }
                 string message = "برای ایجاد مسابقه لطفا ابتدا تعداد سوالات خود را وارد کنید:";
                 var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.GoMenu()};
                 Bot.MakeRequestAsync(reg);
@@ -93,6 +99,8 @@ namespace KetabKhan.Models
             {
                 if (person.startq < person.ExamQuestions.Count)
                 {
+                    //insert to usertake exam
+                    db_helper.InsertToUserTakeExam(person.ChatID, person.TakeExamID, person.ExamQuestions[person.startq - 1].QuestionID, person.Text);
                     string message = person.ExamQuestions[person.startq].Question;
                     var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.QuestionChoices(person.ExamQuestions[person.startq].QuestionID) };
                     Bot.MakeRequestAsync(reg);
@@ -100,6 +108,8 @@ namespace KetabKhan.Models
                 }
                 else
                 {
+                    //insert to usertake exam
+                    db_helper.InsertToUserTakeExam(person.ChatID, person.TakeExamID, person.ExamQuestions[person.startq - 1].QuestionID, person.Text);
                     string message = "مسابقه پایان یافت! با تشکر از شرکت شما در مسابقه.";
                     var reg = new SendMessage(person.ChatID, message) { ReplyMarkup = mykeyboard.Menu() };
                     Bot.MakeRequestAsync(reg);
