@@ -102,6 +102,14 @@ namespace KetabKhan.Linq
 				return this.GetTable<UserTakeExam>();
 			}
 		}
+		
+		public System.Data.Linq.Table<ExamDate> ExamDates
+		{
+			get
+			{
+				return this.GetTable<ExamDate>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Exam")]
@@ -696,6 +704,51 @@ namespace KetabKhan.Linq
 				if ((this._Answer != value))
 				{
 					this._Answer = value;
+				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ExamDate")]
+	public partial class ExamDate
+	{
+		
+		private System.Nullable<long> _ExamID;
+		
+		private System.Nullable<System.DateTime> _Time;
+		
+		public ExamDate()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExamID", DbType="BigInt")]
+		public System.Nullable<long> ExamID
+		{
+			get
+			{
+				return this._ExamID;
+			}
+			set
+			{
+				if ((this._ExamID != value))
+				{
+					this._ExamID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Time", DbType="DateTime")]
+		public System.Nullable<System.DateTime> Time
+		{
+			get
+			{
+				return this._Time;
+			}
+			set
+			{
+				if ((this._Time != value))
+				{
+					this._Time = value;
 				}
 			}
 		}

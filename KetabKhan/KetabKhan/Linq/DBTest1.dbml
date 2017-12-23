@@ -35,4 +35,10 @@
       <Column Name="Answer" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
     </Type>
   </Table>
+  <Table Name="dbo.ExamDate" Member="ExamDates">
+    <Type Name="ExamDate">
+      <Column Name="ExamID" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Time" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
 </Database>

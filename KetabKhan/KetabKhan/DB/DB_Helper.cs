@@ -20,6 +20,7 @@ namespace KetabKhan.DB
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@ExamID", SqlDbType.BigInt).Value = ExamID;
             cmd.Parameters.AddWithValue("@ChatID", SqlDbType.BigInt).Value = UserID;
+            cmd.Parameters.AddWithValue("@Time", SqlDbType.DateTime).Value = System.DateTime.Now;
             cmd.ExecuteNonQuery();
             con.Close();
         }
